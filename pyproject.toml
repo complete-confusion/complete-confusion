@@ -5,6 +5,9 @@ description = "Performance evaluation and visualization with one function call"
 authors = ["Peter Kok <p.kok@esciencecenter.nl>", "Christiaan Meijer <c.meijer@esciencecenter.nl>"]
 license = "Apache 2.0"
 readme = "README.md"
+repository = "https://github.com/complete-confusion/complete-confusion"
+homepage = "https://github.com/complete-confusion/complete-confusion"
+
 
 [tool.poetry.dependencies]
 python = "^3.10"

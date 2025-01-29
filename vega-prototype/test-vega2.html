@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confusion Matrix from External Data File</title>
+    <link rel="stylesheet" href="vega-main.css">
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+    <!-- Import the data -->
+    <script src="data.js"></script>
+
+    <!-- Import the Vega spec -->
+    <script src="vega-spec.js"></script>
+</head>
+<body>
+  <div class="page-centered page-main">
+  <section class="page-content">
+    
+    <h1>Confusion Matrix</h1>
+    <div class="">
+        <div id="confusion-matrix" class="view"></div>
+    </div>
+
+    <h2>Original Data Points</h2>
+    <div id="data-table" class="table-container"></div>
+
+    <script>
+        // Function to parse CSV string into an array of objects
+        function parseCSV(csvContent) {
+            const lines = csvContent.trim().split('\n');
+            const headers = lines[0].split(',');
+            return lines.slice(1).map(line => {
+                const values = line.split(',');
+                return headers.reduce((obj, header, index) => {
+                    obj[header] = values[index];
+                    return obj;
+                }, {});
+            });
+        }
+
+        // Parse the CSV string
+        const csvData = parseCSV(csvContent);
+
+        // Prepare confusion matrix data
+        const classes = [...new Set(csvData.map(row => row.actual).concat(csvData.map(row => row.predicted)))];
+        const matrix = {};
+        classes.forEach(actual => {
+            classes.forEach(predicted => {
+                const key = `${actual}-${predicted}`;
+                matrix[key] = { actual, predicted, value: 0, items: [] };
+            });
+        });
+
+        // Fill the confusion matrix data
+        csvData.forEach(row => {
+            const key = `${row.actual}-${row.predicted}`;
+            matrix[key].value++;         // count
+            matrix[key].items.push(row); // original data point
+        });
+
+        const chartData = Object.values(matrix);
+
+        // Render chart
+        spec.data.values = chartData;
+        vegaEmbed('#confusion-matrix', spec).then(result => {
+            result.view.addEventListener('click', (event, item) => {
+                if (item && item.datum) {
+                    const { actual, predicted } = item.datum;
+                    const key = `${actual}-${predicted}`;
+                    console.log(key);
+                    const filteredData = matrix[key].items;
+
+                    // Display original data points
+                    const table = document.createElement('table');
+                    if (filteredData.length === 0) {
+                        table.innerHTML = '<thead><tr><th>No data</th></tr></thead>';
+                    } else {
+                        const headers = Object.keys(filteredData[0]);
+                        const headerRow = headers.map(h => `<th>${h}</th>`).join('');
+                        const rows = filteredData.map(row =>
+                            `<tr>${headers.map(h => `<td>${row[h]}</td>`).join('')}</tr>`
+                        ).join('');
+
+                        table.innerHTML = `<thead><tr>${headerRow}</tr></thead><tbody>${rows}</tbody>`;
+                    }
+                    const dataTableDiv = document.getElementById('data-table');
+                    dataTableDiv.innerHTML = '';
+                    dataTableDiv.appendChild(table);
+                }
+            });
+        }).catch(console.error);
+    </script>
+  </section>
+  </div>
+</body>
+</html>
