@@ -27,6 +27,10 @@
     <h2>Original Data Points</h2>
     <div id="data-table" class="table-container"></div>
 
+    <h1>Class Metrics</h1>
+    <div class="">
+        <div id="class-metrics" class="view"></div>
+    </div>
     <script>
         // Function to parse CSV string into an array of objects
         function parseCSV(csvContent) {
@@ -62,10 +66,12 @@
         });
 
         const chartData = Object.values(matrix);
+        // print the data to console
+        console.log(chartData);
 
         // Render chart
-        spec.data.values = chartData;
-        vegaEmbed('#confusion-matrix', spec).then(result => {
+        confusionMatrixSpec.data.values = chartData;
+        vegaEmbed('#confusion-matrix', confusionMatrixSpec).then(result => {
             result.view.addEventListener('click', (event, item) => {
                 if (item && item.datum) {
                     const { actual, predicted } = item.datum;
@@ -92,6 +98,9 @@
                 }
             });
         }).catch(console.error);
+
+        // Render class metrics chart
+        vegaEmbed('#class-metrics', classMetricsSpec);
     </script>
   </section>
   </div>
