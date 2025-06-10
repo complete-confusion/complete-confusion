@@ -1,7 +1,17 @@
-const classLevelMetrics = `class_name,precision,recall,f1_score
-    class1,0.7,0.6,0.5
-    class2,0.5,0.2,0.6
-`;
+const classMetricData = {
+    values: [
+        { type: "0", recall: 0.73, precision: 0.65, f1: 0.69 },
+        { type: "1", recall: 0.29, precision: 0.52, f1: 0.37 },
+        { type: "2", recall: 0.85, precision: 0.69, f1: 0.76 },
+        { type: "3", recall: 0.45, precision: 0.63, f1: 0.52 },
+        { type: "4", recall: 0.78, precision: 0.54, f1: 0.64 },
+        { type: "5", recall: 0.62, precision: 0.71, f1: 0.66 },
+        { type: "6", recall: 0.33, precision: 0.48, f1: 0.39 },
+        { type: "7", recall: 0.57, precision: 0.68, f1: 0.62 },
+        { type: "8", recall: 0.81, precision: 0.77, f1: 0.79 },
+        { type: "9", recall: 0.49, precision: 0.59, f1: 0.53 }
+    ]
+};
 
 const csvContent = `
 id,predicted,actual,confidence_score,processing_time_ms,image_size_kb
