@@ -1,4 +1,4 @@
-const   confusionMatrixSpec = {
+const confusionMatrixSpec = {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   description: "Confusion Matrix from CSV",
   data: { values: [] },
