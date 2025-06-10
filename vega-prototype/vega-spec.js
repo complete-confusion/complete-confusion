@@ -106,25 +106,41 @@ values: [
       mark: "rect",
       encoding: {
         x: { field: "metric", type: "nominal", title: null, axis: { labelAngle: 0, orient: "top" } },
-        y: { field: "type", type: "nominal", title: null },
+        y: { field: "type", type: "nominal", title: "Class"},
         color: {
           field: "value",
           type: "quantitative",
           scale: { domain: [0, 1], scheme: { expr: "colorScheme" } },
-          legend: null
+          legend: { title: "Ratio" }
         }
       }
     },
     {
-      mark: "text",
+      mark: {
+        type: "text",
+        align: "center",
+        baseline: "middle",
+        fontSize: 14,
+        fontWeight: "bold"
+      },
       encoding: {
-        x: { field: "metric", type: "nominal", title: null },
-        y: { field: "type", type: "nominal", title: null },
+        x: { field: "metric", type: "nominal" },
+        y: { field: "type", type: "nominal" },
         text: { field: "value", type: "quantitative", format: ".2f" },
         fontSize: { value: 14 }
       }
     }
   ],
   width: 200,
-  height: 250
+  height: 350,
+  config: {
+    title: { fontSize: 22},
+    axis: { labelFontSize: 16, titleFontSize: 18},
+    legend: { labelFontSize: 16, titleFontSize: 18},
+    style: {
+      ['guide-label']: {fontSize: 16},
+      ['guide-title']: {fontSize: 18},
+      ['group-title']: {fontSize: 22}
+    }
+  }
 };
