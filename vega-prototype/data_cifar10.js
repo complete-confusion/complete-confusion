@@ -13,7 +13,7 @@ const classMetricData = {
     ]
 };
 
-const csvContent = `
+const confusionMatrixData = `
 id,predicted,actual,confidence_score,processing_time_ms,image_size_kb
 0,3,3,-0.4533205032348633,3,3
 1,8,8,-0.7402712106704712,8,8
