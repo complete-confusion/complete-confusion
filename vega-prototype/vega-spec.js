@@ -1,4 +1,4 @@
-const spec = {
+const confusionMatrixSpec = {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   description: "Confusion Matrix from CSV",
   data: { values: [] },
@@ -67,5 +67,67 @@ const spec = {
         ['guide-title']: {fontSize: 18},
         ['group-title']: {fontSize: 22}
       }
+  }
+};
+
+const classMetricsSpec = {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  data: classMetricData,
+  params: [
+    {
+      name: "colorScheme",
+      value: "Blues",
+      bind: {
+        input: "select",
+        options: [
+          "Turbo", "Viridis", "Magma", "Inferno", "Plasma", "Cividis", "DarkBlue", "DarkGold", "DarkGreen", "DarkMulti", "DarkRed", "LightGreyRed", "LightGreyTeal", "LightMulti", "LightOrange", "LightTealBlue", "Blues", "Browns", "Greens", "Greys", "Oranges", "Purples", "Reds", "TealBlues", "Teals", "WarmGreys", "BlueOrange", "BrownBlueGreen", "PurpleGreen", "PinkYellowGreen", "PurpleOrange", "RedBlue", "RedGrey", "RedYellowBlue", "RedYellowGreen", "BlueGreen", "BluePurple", "GoldGreen", "GoldOrange", "GoldRed", "GreenBlue", "OrangeRed", "PurpleBlueGreen", "PurpleBlue", "PurpleRed", "RedPurple", "YellowGreenBlue", "YellowGreen", "YellowOrangeBrown", "YellowOrangeRed"
+        ]
+      }
+    }
+  ],
+  transform: [
+    { fold: ["recall", "precision", "f1"], as: ["metric", "value"] }
+  ],
+  layer: [
+    {
+      mark: "rect",
+      encoding: {
+        x: { field: "metric", type: "nominal", title: null, axis: { labelAngle: 0, orient: "top" } },
+        y: { field: "type", type: "nominal", title: "Class"},
+        color: {
+          field: "value",
+          type: "quantitative",
+          scale: { domain: [0, 1], scheme: { expr: "colorScheme" } },
+          legend: { title: "Ratio" }
+        }
+      }
+    },
+    {
+      mark: {
+        type: "text",
+        align: "center",
+        baseline: "middle",
+        fontSize: 14,
+        fontWeight: "bold"
+      },
+      encoding: {
+        x: { field: "metric", type: "nominal" },
+        y: { field: "type", type: "nominal" },
+        text: { field: "value", type: "quantitative", format: ".2f" },
+        fontSize: { value: 14 }
+      }
+    }
+  ],
+  width: 200,
+  height: 350,
+  config: {
+    title: { fontSize: 22},
+    axis: { labelFontSize: 16, titleFontSize: 18},
+    legend: { labelFontSize: 16, titleFontSize: 18},
+    style: {
+      ['guide-label']: {fontSize: 16},
+      ['guide-title']: {fontSize: 18},
+      ['group-title']: {fontSize: 22}
+    }
   }
 };
