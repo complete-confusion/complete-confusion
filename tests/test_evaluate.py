@@ -16,6 +16,6 @@ def test_evaluate_file_created(tmpdir, expected_output_file):
     expected_output_path = Path(tmpdir) / expected_output_file
     test_case = get_cifar10_test_data()
 
-    save_performance_metrics_to_html(test_case.predictions, test_case.truths, tmpdir)
+    save_performance_metrics_to_html(test_case.predictions, test_case.truths, tmpdir, classes=test_case.class_list)
 
     assert expected_output_path.exists(), "Performance metrics HTML file was not created."
