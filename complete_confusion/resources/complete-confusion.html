@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confusion Matrix from External Data File</title>
-    <link rel="stylesheet" href="vega-main.css">
+    <link rel="stylesheet" href="complete-confusion.css">
     <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 
     <!-- Import the data -->
-    <script src="data_cifar10.js"></script>
+    <script src="complete-confusion-data.js"></script>
 
     <!-- Import the Vega spec -->
-    <script src="vega-spec.js"></script>
+    <script src="complete-confusion.js"></script>
 </head>
 <body>
   <div class="page-centered page-main">
@@ -46,7 +46,7 @@
         }
 
         // Parse the CSV string
-        const csvData = parseCSV(csvContent);
+        const csvData = parseCSV(confusionMatrixData);
 
         // Prepare confusion matrix data
         const classes = [...new Set(csvData.map(row => row.actual).concat(csvData.map(row => row.predicted)))];
