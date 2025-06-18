@@ -39,10 +39,10 @@ def _calculate_performance_metrics(truths:Collection[int],
                           'f1': f1_score(truth_labels, prediction_labels, average=None)}
     class_metrics = df(class_metrics_data, index=list(class_list))
 
-
     if probabilities is not None:
         from sklearn.metrics import roc_auc_score, roc_curve
-        fpr, tpr, thresholds = roc_curve(y_true=truth_labels, y_score=probabilities, pos_label='pathogen disgust')  #TODO
+        positive_label = positive_label or class_list[0]  # Default to the first class if not provided
+        fpr, tpr, thresholds = roc_curve(y_true=truth_labels, y_score=probabilities, pos_label=positive_label)
         roc = df({'fpr': fpr, 'tpr': tpr})
         roc_auc = (roc_auc_score(truth_labels, probabilities))
     else:
