@@ -84,7 +84,7 @@ def save_performance_metrics_to_html(predictions: Collection[int],
     unique_class_indices = sorted(set(list(truths) + list(predictions)))
     classes = classes if classes is not None else unique_class_indices
 
-    confusion_matrix_js_str = _create_confusion_matrix_js_str(predictions, probabilities, truths)
+    confusion_matrix_js_str = _create_confusion_matrix_js_str(predictions, truths, probabilities, classes)
     class_metrics_js_str = _create_class_metrics_js_str(predictions, truths, probabilities, classes)
 
     # Save the data to a JavaScript file
@@ -112,10 +112,15 @@ def _create_class_metrics_js_str(
     return class_metrics_js_str
 
 
-def _create_confusion_matrix_js_str(predictions, probabilities, truths):
+def _create_confusion_matrix_js_str(
+        predictions: Collection[int],
+        truths: Collection[int],
+        probabilities: Collection[float],
+        classes: Collection[str]) -> str:
     ids = [str(i) for i in range(len(truths))]
+    class_list = list(classes)
     headers = ['id', 'predicted', 'actual']
-    columns = [ids, predictions, truths]
+    columns = [ids, [class_list[class_id] for class_id in predictions], [class_list[class_id] for class_id in truths]]
     if probabilities is not None:
         headers.append('confidence_score')
         columns.append(probabilities)

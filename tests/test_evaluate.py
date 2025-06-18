@@ -13,6 +13,7 @@ from tests.performance_metrics_test_data import get_cifar10_test_data
     "complete-confusion-data.js",
 ])
 def test_evaluate_file_created(tmpdir, expected_output_file):
+    print(f"Testing for file: {expected_output_file} in {tmpdir}")
     expected_output_path = Path(tmpdir) / expected_output_file
     test_case = get_cifar10_test_data()
 
