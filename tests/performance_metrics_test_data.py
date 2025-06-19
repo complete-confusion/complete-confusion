@@ -1,8 +1,8 @@
-from typing import Iterable, Optional, Collection
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Optional, Collection
 
 import pandas as pd
-from attr import dataclass
-from pathlib import Path
 
 
 @dataclass
