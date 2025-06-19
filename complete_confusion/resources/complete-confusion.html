@@ -18,7 +18,11 @@
 <body>
   <div class="page-centered page-main">
   <section class="page-content">
-    
+    <h1>General Metrics</h1>
+    <div>
+        <div id="general-metrics" class="view"></div>
+    </div>
+
     <h1>Confusion Matrix</h1>
     <div>
         <div id="confusion-matrix" class="view"></div>
@@ -99,6 +103,9 @@
 
         // Render class metrics chart
         vegaEmbed('#class-metrics', classMetricsSpec);
+
+        // Render class metrics chart
+        vegaEmbed('#general-metrics', generalMetricsSpec);
     </script>
   </section>
   </div>
