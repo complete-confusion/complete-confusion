@@ -18,9 +18,8 @@ import complete_confusion as cc
 predictions = [0, 1, 0, 2, 1, 2, 0]
 trues = [0, 1, 0, 2, 0, 2, 2]
 classes = ["Class 0", "Class 1", "Class 2"]
-output_path = "confusion_matrix.html"
 
-cc.export_confusion_matrix_to_html(predictions, trues, classes, output_path)
+cc.save_performance_metrics_to_html(predictions, trues, classes)
 ```
 
 
@@ -28,6 +27,5 @@ cc.export_confusion_matrix_to_html(predictions, trues, classes, output_path)
 
 ```bash
 poetry install
-poetry shell
-python evaluate.py
+poetry run pytest
 ```
