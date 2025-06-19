@@ -62,20 +62,22 @@ def _calculate_performance_metrics(truths:Collection[int],
     return class_metrics, general_metrics[general_metrics['score'].notna()], roc, conf_matrix
 
 
-def save_performance_metrics_to_html(predictions: Collection[int],
-                                     truths: Collection[int],
-                                     output_path: Union[str, Path],
-                                     classes:Collection[str]=None,
-                                     probabilities:Optional[Collection[float]]=None):
+def save_performance_metrics_to_html(
+        predictions: Collection[int],
+        truths: Collection[int],
+        classes: Collection[str] = None,
+        output_path: Union[str, Path] = ".",
+        probabilities: Optional[Collection[float]] = None
+):
     """
     Creates a confusion matrix and exports it to an HTML file.
 
     Args:
-        predictions (list or np.ndarray): The predicted class labels.
-        truths (list or np.ndarray): The true class labels.
-        probabilities: (list or np.ndarray, optional): The predicted probabilities for each class.
-        classes (list of str): List of class names corresponding to labels.
-        output_path (str): Path to the output HTML file.
+        predictions: The predicted class labels.
+        truths: The true class labels.
+        probabilities: The predicted probabilities for each class.
+        classes: List of class names corresponding to labels.
+        output_path: Path to a folder to save the output files to.
     """
     output_path = Path(output_path)
     resources = Path(__file__).resolve().parent / 'resources'
