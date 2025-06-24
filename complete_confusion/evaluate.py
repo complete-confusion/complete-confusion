@@ -116,15 +116,14 @@ def save_performance_metrics_to_html(
     shutil.copy(resources / 'complete-confusion.js', output_path)
 
 
-def _table_df_to_str(class_metrics_df, variable_name):
+def _table_df_to_str(metrics_df, variable_name):
     """Convert the dataframe to a list of dicts for JavaScript"""
-    class_metrics_values = [
-        {"type": idx, **{col: float(class_metrics_df.loc[idx, col]) for col in class_metrics_df.columns}}
-        for idx in class_metrics_df.index
+    metrics_values = [
+        {"type": idx, **{col: float(metrics_df.loc[idx, col]) for col in metrics_df.columns}}
+        for idx in metrics_df.index
     ]
-    class_metrics_js_str = "const " + variable_name + " = {\n    values: " + str(class_metrics_values).replace("'",
-                                                                                                               '"') + "\n};\n"
-    return class_metrics_js_str
+    return ("const " + variable_name + " = {\n    values: " +
+            str(metrics_values).replace("'", '"') + "\n};\n")
 
 
 def _create_confusion_matrix_js_str(
