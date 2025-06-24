@@ -19,10 +19,10 @@ def print_performance_metrics(trues, predicted, probs, class_list):
     print(conf_matrix)
 
 
-def _calculate_performance_metrics(truths:Collection[int],
-                                   predictions:Collection[int],
-                                   probabilities:Collection[float],
-                                   class_list:Collection[str]):
+def _calculate_performance_metrics(truths: Collection[int],
+                                   predictions: Collection[int],
+                                   probabilities: Collection[float],
+                                   class_list: Collection[str]):
     """
     Calculates some performance metrics given a list of ground truth values and a list of predictions to be compared.
     :param truths: list of ground truths
@@ -33,6 +33,7 @@ def _calculate_performance_metrics(truths:Collection[int],
     """
     truth_labels = [list(class_list)[i] for i in truths]
     prediction_labels = [list(class_list)[i] for i in predictions]
+    is_binary_classification = len(class_list) == 2
 
     class_metrics_data = {'recall': recall_score(truth_labels, prediction_labels, average=None),
                           'precision': precision_score(truth_labels, prediction_labels, average=None),
@@ -49,11 +50,23 @@ def _calculate_performance_metrics(truths:Collection[int],
         roc_auc = None
 
     i_set = np.unique(list(truths) + list(predictions))
-    general_metrics_data = {'auc':[roc_auc],
-                            'accuracy':[accuracy_score(truth_labels, prediction_labels)],
-                            'Krippendorff alpha':[krippendorff.alpha(reliability_data=[truths, predictions],
-                                               level_of_measurement='nominal', value_domain=i_set)],
-                            'f1 (macro)':[f1_score(truth_labels, prediction_labels, average="macro")],
+
+    f1_scores = {
+        'f1 (micro)': [f1_score(truth_labels, prediction_labels, average="micro")],
+        'f1 (macro)': [f1_score(truth_labels, prediction_labels, average="macro")],
+        'f1 (weighted)': [f1_score(truth_labels, prediction_labels, average="weighted")],
+    }
+    if is_binary_classification:
+        f1_scores.update({
+            'f1 (binary)': [f1_score(truth_labels, prediction_labels, average="binary")],
+        })
+
+    general_metrics_data = {'auc': [roc_auc],
+                            'accuracy': [accuracy_score(truth_labels, prediction_labels)],
+                            'Krippendorff alpha': [krippendorff.alpha(reliability_data=[truths, predictions],
+                                                                      level_of_measurement='nominal',
+                                                                      value_domain=i_set)],
+                            **f1_scores,
                             }
     general_metrics = df.from_dict(general_metrics_data, orient='index', columns=['score'])
 
