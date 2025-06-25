@@ -22,27 +22,27 @@ def print_performance_metrics(trues, predicted, probs, class_list):
 def _calculate_performance_metrics(truths: Collection[int],
                                    predictions: Collection[int],
                                    probabilities: Collection[float],
-                                   class_list: Collection[str]):
+                                   classes: Collection[str]):
     """
     Calculates some performance metrics given a list of ground truth values and a list of predictions to be compared.
     :param truths: list of ground truths
     :param predictions: list of model predictions
     :param probabilities: list of model predicted probabilities
-    :param class_list: the set of all possible labels
+    :param classes: the collection of all possible labels
     :return: a dataframe with class level metrics and a dataframe with general metrics and a one with ROC values
     """
-    truth_labels = [list(class_list)[i] for i in truths]
-    prediction_labels = [list(class_list)[i] for i in predictions]
-    is_binary_classification = len(class_list) == 2
+    truth_labels = [list(classes)[i] for i in truths]
+    prediction_labels = [list(classes)[i] for i in predictions]
+    is_binary_classification = len(classes) == 2
 
     class_metrics_data = {'recall': recall_score(truth_labels, prediction_labels, average=None),
                           'precision': precision_score(truth_labels, prediction_labels, average=None),
                           'f1': f1_score(truth_labels, prediction_labels, average=None)}
-    class_metrics = df(class_metrics_data, index=list(class_list))
+    class_metrics = df(class_metrics_data, index=list(classes))
 
     if probabilities is not None:
         from sklearn.metrics import roc_auc_score, roc_curve
-        fpr, tpr, thresholds = roc_curve(y_true=truth_labels, y_score=probabilities, pos_label=(class_list[0]))
+        fpr, tpr, thresholds = roc_curve(y_true=truth_labels, y_score=probabilities, pos_label=(list(classes)[0]))
         roc = df({'fpr': fpr, 'tpr': tpr})
         roc_auc = (roc_auc_score(truth_labels, probabilities))
     else:
@@ -58,7 +58,7 @@ def _calculate_performance_metrics(truths: Collection[int],
     }
     if is_binary_classification:
         f1_scores.update({
-            'f1 (binary)': [f1_score(truth_labels, prediction_labels, average="binary")],
+            'f1 (binary)': [f1_score(truth_labels, prediction_labels, average="binary", pos_label=(list(classes)[0]))],
         })
 
     general_metrics_data = {'auc': [roc_auc],
@@ -71,8 +71,8 @@ def _calculate_performance_metrics(truths: Collection[int],
     general_metrics = df.from_dict(general_metrics_data, orient='index', columns=['score'])
 
     conf_matrix = pd.DataFrame(confusion_matrix(truth_labels, prediction_labels),
-                               index=pd.MultiIndex.from_product([['True:'], class_list]),
-                               columns=pd.MultiIndex.from_product([['Predicted:'], class_list]))
+                               index=pd.MultiIndex.from_product([['True:'], classes]),
+                               columns=pd.MultiIndex.from_product([['Predicted:'], classes]))
 
     return class_metrics, general_metrics[general_metrics['score'].notna()], roc, conf_matrix
 

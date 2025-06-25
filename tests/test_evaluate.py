@@ -1,21 +1,32 @@
+import itertools
 from pathlib import Path
 
 import pytest
 
 from complete_confusion.evaluate import save_performance_metrics_to_html
-from tests.performance_metrics_test_data import get_cifar10_test_data
+from tests.performance_metrics_test_data import get_cifar10_test_data, get_eulaw_test_data
 
-
-@pytest.mark.parametrize("expected_output_file", [
+expected_files = [
     "complete-confusion.html",
     "complete-confusion.css",
     "complete-confusion.js",
     "complete-confusion-data.js",
-])
-def test_evaluate_file_created(tmpdir, expected_output_file):
-    print(f"Testing for file: {expected_output_file} in {tmpdir}")
+]
+
+test_cases = [
+    get_cifar10_test_data(),
+    get_eulaw_test_data(),
+]
+
+
+@pytest.mark.parametrize(
+    "test_case, expected_output_file",
+    list(itertools.product(test_cases, expected_files)),
+    ids=lambda x: str(x),
+)
+def test_evaluate_file_created(tmpdir, test_case, expected_output_file):
+    print(f"Using test case {test_case.name} Testing for file: {expected_output_file} in {tmpdir}")
     expected_output_path = Path(tmpdir) / expected_output_file
-    test_case = get_cifar10_test_data()
 
     save_performance_metrics_to_html(test_case.predictions, test_case.truths, classes=test_case.class_list,
                                      output_path=tmpdir)
