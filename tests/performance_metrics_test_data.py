@@ -12,6 +12,7 @@ class PerformanceMetricsTestData:
     truths: Collection[int]
     probabilities: Optional[Collection[Collection[float]]]
     class_list: Optional[Collection[str]]
+    text_representations: Optional[Collection[str]]
 
     def __str__(self):
         return self.name
@@ -32,6 +33,7 @@ def get_cifar10_test_data() -> PerformanceMetricsTestData:
         truths=trues,
         probabilities=None,
         class_list=class_list,
+        text_representations=None,
     )
 
 
@@ -50,4 +52,5 @@ def get_eulaw_test_data() -> PerformanceMetricsTestData:
         truths=trues,
         probabilities=None,
         class_list=class_list,
+        text_representations=df["sentence"].tolist(),
     )

@@ -81,6 +81,7 @@ def save_performance_metrics_to_html(
         predictions: Collection[int],
         truths: Collection[int],
         classes: Collection[str] = None,
+        text_representations: Collection[str] = None,
         output_path: Union[str, Path] = ".",
         probabilities: Optional[Collection[float]] = None
 ):
@@ -90,8 +91,9 @@ def save_performance_metrics_to_html(
     Args:
         predictions: The predicted class labels.
         truths: The true class labels.
-        probabilities: The predicted probabilities for each class.
+        text_representations: Optional text representations of the instances.
         classes: List of class names corresponding to labels.
+        probabilities: The predicted probabilities for each class.
         output_path: Path to a folder to save the output files to.
     """
     output_path = Path(output_path)
@@ -100,7 +102,8 @@ def save_performance_metrics_to_html(
     unique_class_indices = sorted(set(list(truths) + list(predictions)))
     classes = classes if classes is not None else unique_class_indices
 
-    confusion_matrix_js_str = _create_confusion_matrix_js_str(predictions, truths, probabilities, classes)
+    confusion_matrix_js_str = _create_confusion_matrix_js_str(
+        predictions, truths, probabilities, classes, text_representations)
 
     class_metrics_df, general_metrics_df, _, _ = _calculate_performance_metrics(truths, predictions, probabilities,
                                                                                 classes)
@@ -108,7 +111,7 @@ def save_performance_metrics_to_html(
     general_metrics_js_str = _table_df_to_str(general_metrics_df, "generalMetricsData")
 
     # Save the data to a JavaScript file
-    with open(output_path / 'complete-confusion-data.js', 'w') as f:
+    with open(output_path / 'complete-confusion-data.js', 'w', encoding='utf-8') as f:
         f.write('\n'.join([confusion_matrix_js_str, class_metrics_js_str, general_metrics_js_str]))
 
     shutil.copy(resources / 'complete-confusion.html', output_path)
@@ -126,18 +129,30 @@ def _table_df_to_str(metrics_df, variable_name):
             str(metrics_values).replace("'", '"') + "\n};\n")
 
 
+def _encode(e:str)->str:
+    return e.replace(",", "[comma]")
+
+
 def _create_confusion_matrix_js_str(
         predictions: Collection[int],
         truths: Collection[int],
         probabilities: Collection[float],
-        classes: Collection[str]) -> str:
+        classes: Collection[str],
+        text_representations: Collection[str],
+) -> str:
     ids = [str(i) for i in range(len(truths))]
     class_list = list(classes)
     headers = ['id', 'predicted', 'actual']
     columns = [ids, [class_list[class_id] for class_id in predictions], [class_list[class_id] for class_id in truths]]
+
+    if text_representations:
+        headers.append('text representation')
+        columns.append(text_representations)
+
     if probabilities is not None:
         headers.append('confidence_score')
         columns.append(probabilities)
-    data_csv_str = '\n'.join([','.join([str(e) for e in data_point]) for data_point in zip(*columns)])
+    data_csv_str = '\n'.join([','.join([str(_encode(e)) for e in data_point]) for data_point in zip(*columns)])
     confusion_matrix_js_str = "const confusionMatrixData = `\n" + ','.join(headers) + "\n" + data_csv_str + "`;\n"
+
     return confusion_matrix_js_str
