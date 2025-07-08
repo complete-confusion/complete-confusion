@@ -72,7 +72,7 @@ const confusionMatrixSpec = {
 
 const classMetricsSpec = {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  data: classMetricData,
+  data: classMetricsData,
   params: [
     {
       name: "colorScheme",
