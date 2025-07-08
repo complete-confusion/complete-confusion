@@ -19,10 +19,10 @@ def print_performance_metrics(trues, predicted, probs, class_list):
     print(conf_matrix)
 
 
-def _calculate_performance_metrics(truths:Collection[int],
-                                   predictions:Collection[int],
-                                   probabilities:Collection[float],
-                                   class_list:Collection[str]):
+def _calculate_performance_metrics(truths: Collection[int],
+                                   predictions: Collection[int],
+                                   probabilities: Collection[float],
+                                   class_list: Collection[str]):
     """
     Calculates some performance metrics given a list of ground truth values and a list of predictions to be compared.
     :param truths: list of ground truths
@@ -33,6 +33,7 @@ def _calculate_performance_metrics(truths:Collection[int],
     """
     truth_labels = [list(class_list)[i] for i in truths]
     prediction_labels = [list(class_list)[i] for i in predictions]
+    is_binary_classification = len(class_list) == 2
 
     class_metrics_data = {'recall': recall_score(truth_labels, prediction_labels, average=None),
                           'precision': precision_score(truth_labels, prediction_labels, average=None),
@@ -49,11 +50,25 @@ def _calculate_performance_metrics(truths:Collection[int],
         roc_auc = None
 
     i_set = np.unique(list(truths) + list(predictions))
-    general_metrics_data = [roc_auc,
-                            accuracy_score(truth_labels, prediction_labels),
-                            krippendorff.alpha(reliability_data=[truths, predictions],
-                                               level_of_measurement='nominal', value_domain=i_set)]
-    general_metrics = df(general_metrics_data, index=['auc', 'accuracy', 'krippendorff alpha'], columns=['score'])
+
+    f1_scores = {
+        'f1 (micro)': [f1_score(truth_labels, prediction_labels, average="micro")],
+        'f1 (macro)': [f1_score(truth_labels, prediction_labels, average="macro")],
+        'f1 (weighted)': [f1_score(truth_labels, prediction_labels, average="weighted")],
+    }
+    if is_binary_classification:
+        f1_scores.update({
+            'f1 (binary)': [f1_score(truth_labels, prediction_labels, average="binary")],
+        })
+
+    general_metrics_data = {'auc': [roc_auc],
+                            'accuracy': [accuracy_score(truth_labels, prediction_labels)],
+                            'Krippendorff alpha': [krippendorff.alpha(reliability_data=[truths, predictions],
+                                                                      level_of_measurement='nominal',
+                                                                      value_domain=i_set)],
+                            **f1_scores,
+                            }
+    general_metrics = df.from_dict(general_metrics_data, orient='index', columns=['score'])
 
     conf_matrix = pd.DataFrame(confusion_matrix(truth_labels, prediction_labels),
                                index=pd.MultiIndex.from_product([['True:'], class_list]),
@@ -86,31 +101,29 @@ def save_performance_metrics_to_html(
     classes = classes if classes is not None else unique_class_indices
 
     confusion_matrix_js_str = _create_confusion_matrix_js_str(predictions, truths, probabilities, classes)
-    class_metrics_js_str = _create_class_metrics_js_str(predictions, truths, probabilities, classes)
+
+    class_metrics_df, general_metrics_df, _, _ = _calculate_performance_metrics(truths, predictions, probabilities,
+                                                                                classes)
+    class_metrics_js_str = _table_df_to_str(class_metrics_df, "classMetricsData")
+    general_metrics_js_str = _table_df_to_str(general_metrics_df, "generalMetricsData")
 
     # Save the data to a JavaScript file
     with open(output_path / 'complete-confusion-data.js', 'w') as f:
-        f.write('\n'.join([confusion_matrix_js_str, class_metrics_js_str]))
+        f.write('\n'.join([confusion_matrix_js_str, class_metrics_js_str, general_metrics_js_str]))
 
     shutil.copy(resources / 'complete-confusion.html', output_path)
     shutil.copy(resources / 'complete-confusion.css', output_path)
     shutil.copy(resources / 'complete-confusion.js', output_path)
 
 
-def _create_class_metrics_js_str(
-        predictions: Collection[int],
-        truths: Collection[int],
-        probabilities: Collection[float],
-        classes: Collection[str]) -> str:
-    class_metrics_df, _, _, _ = _calculate_performance_metrics(truths, predictions, probabilities, classes)
-    # Convert the dataframe to a list of dicts for JavaScript
-    class_metrics_values = [
-        {"type": idx, **{col: float(class_metrics_df.loc[idx, col]) for col in class_metrics_df.columns}}
-        for idx in class_metrics_df.index
+def _table_df_to_str(metrics_df, variable_name):
+    """Convert the dataframe to a list of dicts for JavaScript"""
+    metrics_values = [
+        {"type": idx, **{col: float(metrics_df.loc[idx, col]) for col in metrics_df.columns}}
+        for idx in metrics_df.index
     ]
-    class_metrics_js_str = "const classMetricsData = {\n    values: " + str(class_metrics_values).replace("'",
-                                                                                                          '"') + "\n};\n"
-    return class_metrics_js_str
+    return ("const " + variable_name + " = {\n    values: " +
+            str(metrics_values).replace("'", '"') + "\n};\n")
 
 
 def _create_confusion_matrix_js_str(
