@@ -64,6 +64,9 @@
 
         // Fill the confusion matrix data
         csvData.forEach(row => {
+            if (row['text representation']) {
+                row['text representation'] = row['text representation'].replace(/\[comma]/g, ',');
+            }
             const key = `${row.actual}-${row.predicted}`;
             matrix[key].value++;         // count
             matrix[key].items.push(row); // original data point
