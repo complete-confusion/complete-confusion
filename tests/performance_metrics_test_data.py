@@ -43,11 +43,11 @@ def get_eulaw_test_data() -> PerformanceMetricsTestData:
     predictions = df["prediction"].tolist()
     trues = df["true"].tolist()
     class_list = ["regulatory", "non-regulatory"]
-
+    probabilities = df["prob_0"].tolist()
     return PerformanceMetricsTestData(
         name="eulaw",
         predictions=predictions,
         truths=trues,
-        probabilities=None,
+        probabilities=probabilities,
         class_list=class_list,
     )
