@@ -29,7 +29,7 @@ def _calculate_performance_metrics(truths: Collection[int],
     :param predictions: list of model predictions
     :param probabilities: list of model predicted probabilities
     :param classes: the collection of all possible labels
-    :return: a dataframe with class level metrics and a dataframe with general metrics and a one with ROC values
+    :return: 4 dataframes containing class level metrics, general metrics, ROC values and the confusion matrix
     """
     truth_labels = [list(classes)[i] for i in truths]
     prediction_labels = [list(classes)[i] for i in predictions]
@@ -108,14 +108,16 @@ def save_performance_metrics_to_html(
     confusion_matrix_js_str = _create_confusion_matrix_js_str(
         predictions, truths, probabilities, classes, text_representations, image_representations)
 
-    class_metrics_df, general_metrics_df, _, _ = _calculate_performance_metrics(truths, predictions, probabilities,
+    class_metrics_df, general_metrics_df, roc_df, _ = _calculate_performance_metrics(truths, predictions, probabilities,
                                                                                 classes)
+
     class_metrics_js_str = _table_df_to_str(class_metrics_df, "classMetricsData")
+    roc_js_str = "" if roc_df is None else _table_df_to_str(roc_df, "rocData")
     general_metrics_js_str = _table_df_to_str(general_metrics_df, "generalMetricsData")
 
     # Save the data to a JavaScript file
     with open(output_path / 'complete-confusion-data.js', 'w', encoding='utf-8') as f:
-        f.write('\n'.join([confusion_matrix_js_str, class_metrics_js_str, general_metrics_js_str]))
+        f.write('\n'.join([confusion_matrix_js_str, class_metrics_js_str, general_metrics_js_str, roc_js_str]))
 
     shutil.copy(resources / 'complete-confusion.html', output_path)
     shutil.copy(resources / 'complete-confusion.css', output_path)
