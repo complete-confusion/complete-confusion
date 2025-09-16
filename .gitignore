@@ -3,8 +3,16 @@
 __pycache__/
 *.py[cod]
 
+archive/
 build/
 dist/
 *.egg-info/
 
 /.idea/
+
+# Documentation builds
+docs/build/
+docs/source/_build/
+
+# Generated HTML files
+*.html
