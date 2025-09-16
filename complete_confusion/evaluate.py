@@ -112,7 +112,7 @@ def save_performance_metrics_to_html(
                                                                                 classes)
 
     class_metrics_js_str = _table_df_to_str(class_metrics_df, "classMetricsData")
-    roc_js_str = "" if roc_df is None else _table_df_to_str(roc_df, "rocData")
+    roc_js_str = "" if roc_df is None else _table_df_to_str(roc_df, "rocCurveData")
     general_metrics_js_str = _table_df_to_str(general_metrics_df, "generalMetricsData")
 
     # Save the data to a JavaScript file
@@ -162,7 +162,7 @@ def _create_confusion_matrix_js_str(
     if probabilities is not None:
         headers.append('confidence_score')
         columns.append(probabilities)
-    data_csv_str = '\n'.join([','.join([str(_encode(e)) for e in data_point]) for data_point in zip(*columns)])
+    data_csv_str = '\n'.join([','.join([str(_encode(str(e))) for e in data_point]) for data_point in zip(*columns)])
     confusion_matrix_js_str = "const confusionMatrixData = `\n" + ','.join(headers) + "\n" + data_csv_str + "`;\n"
 
     return confusion_matrix_js_str
