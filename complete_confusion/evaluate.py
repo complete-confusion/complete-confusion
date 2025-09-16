@@ -101,6 +101,9 @@ def save_performance_metrics_to_html(
     """
     output_path = Path(output_path)
     resources = Path(__file__).resolve().parent / 'resources'
+    
+    # Create the output directory if it doesn't exist
+    output_path.mkdir(parents=True, exist_ok=True)
 
     unique_class_indices = sorted(set(list(truths) + list(predictions)))
     classes = classes if classes is not None else unique_class_indices
