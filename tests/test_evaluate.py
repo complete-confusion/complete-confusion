@@ -29,6 +29,8 @@ def test_evaluate_file_created(tmpdir, test_case, expected_output_file):
     expected_output_path = Path(tmpdir) / expected_output_file
 
     save_performance_metrics_to_html(test_case.predictions, test_case.truths, classes=test_case.class_list,
-                                     output_path=tmpdir, text_representations=test_case.text_representations)
+                                     text_representations=test_case.text_representations,
+                                     image_representations=test_case.image_representations,
+                                     output_path=tmpdir)
 
     assert expected_output_path.exists(), "Performance metrics HTML file was not created."

@@ -82,6 +82,7 @@ def save_performance_metrics_to_html(
         truths: Collection[int],
         classes: Collection[str] = None,
         text_representations: Collection[str] = None,
+        image_representations: Collection[str] = None,
         output_path: Union[str, Path] = ".",
         probabilities: Optional[Collection[float]] = None
 ):
@@ -92,6 +93,8 @@ def save_performance_metrics_to_html(
         predictions: The predicted class labels.
         truths: The true class labels.
         text_representations: Optional text representations of the instances.
+        image_representations: Optional list of URIs, one URI for each data instance, depicting, summarizing or
+        representing the data instance.
         classes: List of class names corresponding to labels.
         probabilities: The predicted probabilities for each class.
         output_path: Path to a folder to save the output files to.
@@ -103,7 +106,7 @@ def save_performance_metrics_to_html(
     classes = classes if classes is not None else unique_class_indices
 
     confusion_matrix_js_str = _create_confusion_matrix_js_str(
-        predictions, truths, probabilities, classes, text_representations)
+        predictions, truths, probabilities, classes, text_representations, image_representations)
 
     class_metrics_df, general_metrics_df, _, _ = _calculate_performance_metrics(truths, predictions, probabilities,
                                                                                 classes)
@@ -139,6 +142,7 @@ def _create_confusion_matrix_js_str(
         probabilities: Collection[float],
         classes: Collection[str],
         text_representations: Collection[str],
+        image_representations: Collection[str],
 ) -> str:
     ids = [str(i) for i in range(len(truths))]
     class_list = list(classes)
@@ -148,6 +152,10 @@ def _create_confusion_matrix_js_str(
     if text_representations:
         headers.append('text representation')
         columns.append(text_representations)
+
+    if image_representations:
+        headers.append('image representation')
+        columns.append([f'<img src="{p}"/>' for p in image_representations])
 
     if probabilities is not None:
         headers.append('confidence_score')
