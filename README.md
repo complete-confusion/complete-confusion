@@ -2,6 +2,7 @@
 
 A simple call to visualize performance metrics for classification and regression models.
 
+Comprehensive documentation, including demos, can be found at [https://complete-confusion.github.io/complete-confusion/](https://complete-confusion.github.io/complete-confusion/).
 
 ## Installation
 
