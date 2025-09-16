@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>complete_confusion.evaluate &mdash; Complete Confusion 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="canonical" href="https://complete-confusion.github.io/complete-confusion/_modules/complete_confusion/evaluate.html" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Complete Confusion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks.html">Jupyter Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Complete Confusion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">complete_confusion.evaluate</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for complete_confusion.evaluate</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">krippendorff</span><span class="w"> </span><span class="kn">import</span> <span class="n">krippendorff</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span> <span class="k">as</span> <span class="n">df</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">,</span> <span class="n">precision_score</span><span class="p">,</span> <span class="n">f1_score</span><span class="p">,</span> <span class="n">accuracy_score</span>
+
+
+<div class="viewcode-block" id="print_performance_metrics">
+<a class="viewcode-back" href="../../api.html#complete_confusion.evaluate.print_performance_metrics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_performance_metrics</span><span class="p">(</span><span class="n">trues</span><span class="p">,</span> <span class="n">predicted</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">class_list</span><span class="p">):</span>
+    <span class="n">class_metrics</span><span class="p">,</span> <span class="n">general_metrics</span><span class="p">,</span> <span class="n">roc</span><span class="p">,</span> <span class="n">conf_matrix</span> <span class="o">=</span> <span class="n">_calculate_performance_metrics</span><span class="p">(</span><span class="n">trues</span><span class="p">,</span> <span class="n">predicted</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span>
+                                                                                      <span class="n">class_list</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">class_metrics</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">general_metrics</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+    <span class="c1"># if roc is not None:</span>
+    <span class="c1"># print(roc)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">conf_matrix</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_calculate_performance_metrics</span><span class="p">(</span><span class="n">truths</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+                                   <span class="n">predictions</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+                                   <span class="n">probabilities</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                                   <span class="n">classes</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates some performance metrics given a list of ground truth values and a list of predictions to be compared.</span>
+<span class="sd">    :param truths: list of ground truths</span>
+<span class="sd">    :param predictions: list of model predictions</span>
+<span class="sd">    :param probabilities: list of model predicted probabilities</span>
+<span class="sd">    :param classes: the collection of all possible labels</span>
+<span class="sd">    :return: a dataframe with class level metrics and a dataframe with general metrics and a one with ROC values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">truth_labels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">classes</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">truths</span><span class="p">]</span>
+    <span class="n">prediction_labels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">classes</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">]</span>
+    <span class="n">is_binary_classification</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+
+    <span class="n">class_metrics_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;recall&#39;</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">prediction_labels</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                          <span class="s1">&#39;precision&#39;</span><span class="p">:</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">prediction_labels</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                          <span class="s1">&#39;f1&#39;</span><span class="p">:</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">prediction_labels</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">)}</span>
+    <span class="n">class_metrics</span> <span class="o">=</span> <span class="n">df</span><span class="p">(</span><span class="n">class_metrics_data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">classes</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">probabilities</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">roc_auc_score</span><span class="p">,</span> <span class="n">roc_curve</span>
+        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">y_score</span><span class="o">=</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">classes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">roc</span> <span class="o">=</span> <span class="n">df</span><span class="p">({</span><span class="s1">&#39;fpr&#39;</span><span class="p">:</span> <span class="n">fpr</span><span class="p">,</span> <span class="s1">&#39;tpr&#39;</span><span class="p">:</span> <span class="n">tpr</span><span class="p">})</span>
+        <span class="n">roc_auc</span> <span class="o">=</span> <span class="p">(</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">roc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">roc_auc</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">i_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">truths</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">predictions</span><span class="p">))</span>
+
+    <span class="n">f1_scores</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;f1 (micro)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">f1_score</span><span class="p">(</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">prediction_labels</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span><span class="p">)],</span>
+        <span class="s1">&#39;f1 (macro)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">f1_score</span><span class="p">(</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">prediction_labels</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">)],</span>
+        <span class="s1">&#39;f1 (weighted)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">f1_score</span><span class="p">(</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">prediction_labels</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;weighted&quot;</span><span class="p">)],</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">is_binary_classification</span><span class="p">:</span>
+        <span class="n">f1_scores</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s1">&#39;f1 (binary)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">f1_score</span><span class="p">(</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">prediction_labels</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">classes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))],</span>
+        <span class="p">})</span>
+
+    <span class="n">general_metrics_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;auc&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">roc_auc</span><span class="p">],</span>
+                            <span class="s1">&#39;accuracy&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">prediction_labels</span><span class="p">)],</span>
+                            <span class="s1">&#39;Krippendorff alpha&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">krippendorff</span><span class="o">.</span><span class="n">alpha</span><span class="p">(</span><span class="n">reliability_data</span><span class="o">=</span><span class="p">[</span><span class="n">truths</span><span class="p">,</span> <span class="n">predictions</span><span class="p">],</span>
+                                                                      <span class="n">level_of_measurement</span><span class="o">=</span><span class="s1">&#39;nominal&#39;</span><span class="p">,</span>
+                                                                      <span class="n">value_domain</span><span class="o">=</span><span class="n">i_set</span><span class="p">)],</span>
+                            <span class="o">**</span><span class="n">f1_scores</span><span class="p">,</span>
+                            <span class="p">}</span>
+    <span class="n">general_metrics</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">general_metrics_data</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">])</span>
+
+    <span class="n">conf_matrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">truth_labels</span><span class="p">,</span> <span class="n">prediction_labels</span><span class="p">),</span>
+                               <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_product</span><span class="p">([[</span><span class="s1">&#39;True:&#39;</span><span class="p">],</span> <span class="n">classes</span><span class="p">]),</span>
+                               <span class="n">columns</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_product</span><span class="p">([[</span><span class="s1">&#39;Predicted:&#39;</span><span class="p">],</span> <span class="n">classes</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">class_metrics</span><span class="p">,</span> <span class="n">general_metrics</span><span class="p">[</span><span class="n">general_metrics</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()],</span> <span class="n">roc</span><span class="p">,</span> <span class="n">conf_matrix</span>
+
+
+<div class="viewcode-block" id="save_performance_metrics_to_html">
+<a class="viewcode-back" href="../../api.html#complete_confusion.evaluate.save_performance_metrics_to_html">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_performance_metrics_to_html</span><span class="p">(</span>
+        <span class="n">predictions</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">truths</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">classes</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">text_representations</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">image_representations</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+        <span class="n">probabilities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a confusion matrix and exports it to an HTML file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        predictions: The predicted class labels.</span>
+<span class="sd">        truths: The true class labels.</span>
+<span class="sd">        text_representations: Optional text representations of the instances.</span>
+<span class="sd">        image_representations: Optional list of URIs, one URI for each data instance, depicting, summarizing or</span>
+<span class="sd">        representing the data instance.</span>
+<span class="sd">        classes: List of class names corresponding to labels.</span>
+<span class="sd">        probabilities: The predicted probabilities for each class.</span>
+<span class="sd">        output_path: Path to a folder to save the output files to.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="n">resources</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;resources&#39;</span>
+
+    <span class="n">unique_class_indices</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">truths</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">predictions</span><span class="p">)))</span>
+    <span class="n">classes</span> <span class="o">=</span> <span class="n">classes</span> <span class="k">if</span> <span class="n">classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">unique_class_indices</span>
+
+    <span class="n">confusion_matrix_js_str</span> <span class="o">=</span> <span class="n">_create_confusion_matrix_js_str</span><span class="p">(</span>
+        <span class="n">predictions</span><span class="p">,</span> <span class="n">truths</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">text_representations</span><span class="p">,</span> <span class="n">image_representations</span><span class="p">)</span>
+
+    <span class="n">class_metrics_df</span><span class="p">,</span> <span class="n">general_metrics_df</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_calculate_performance_metrics</span><span class="p">(</span><span class="n">truths</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span>
+                                                                                <span class="n">classes</span><span class="p">)</span>
+    <span class="n">class_metrics_js_str</span> <span class="o">=</span> <span class="n">_table_df_to_str</span><span class="p">(</span><span class="n">class_metrics_df</span><span class="p">,</span> <span class="s2">&quot;classMetricsData&quot;</span><span class="p">)</span>
+    <span class="n">general_metrics_js_str</span> <span class="o">=</span> <span class="n">_table_df_to_str</span><span class="p">(</span><span class="n">general_metrics_df</span><span class="p">,</span> <span class="s2">&quot;generalMetricsData&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Save the data to a JavaScript file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="s1">&#39;complete-confusion-data.js&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">confusion_matrix_js_str</span><span class="p">,</span> <span class="n">class_metrics_js_str</span><span class="p">,</span> <span class="n">general_metrics_js_str</span><span class="p">]))</span>
+
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">resources</span> <span class="o">/</span> <span class="s1">&#39;complete-confusion.html&#39;</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">resources</span> <span class="o">/</span> <span class="s1">&#39;complete-confusion.css&#39;</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">resources</span> <span class="o">/</span> <span class="s1">&#39;complete-confusion.js&#39;</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_table_df_to_str</span><span class="p">(</span><span class="n">metrics_df</span><span class="p">,</span> <span class="n">variable_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the dataframe to a list of dicts for JavaScript&quot;&quot;&quot;</span>
+    <span class="n">metrics_values</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">idx</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">metrics_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">col</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">metrics_df</span><span class="o">.</span><span class="n">columns</span><span class="p">}}</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">metrics_df</span><span class="o">.</span><span class="n">index</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;const &quot;</span> <span class="o">+</span> <span class="n">variable_name</span> <span class="o">+</span> <span class="s2">&quot; = {</span><span class="se">\n</span><span class="s2">    values: &quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">metrics_values</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">};</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_encode</span><span class="p">(</span><span class="n">e</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">e</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;[comma]&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_confusion_matrix_js_str</span><span class="p">(</span>
+        <span class="n">predictions</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">truths</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">probabilities</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">classes</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">text_representations</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">image_representations</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">truths</span><span class="p">))]</span>
+    <span class="n">class_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;predicted&#39;</span><span class="p">,</span> <span class="s1">&#39;actual&#39;</span><span class="p">]</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">ids</span><span class="p">,</span> <span class="p">[</span><span class="n">class_list</span><span class="p">[</span><span class="n">class_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">class_id</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">],</span> <span class="p">[</span><span class="n">class_list</span><span class="p">[</span><span class="n">class_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">class_id</span> <span class="ow">in</span> <span class="n">truths</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="n">text_representations</span><span class="p">:</span>
+        <span class="n">headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;text representation&#39;</span><span class="p">)</span>
+        <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text_representations</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">image_representations</span><span class="p">:</span>
+        <span class="n">headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;image representation&#39;</span><span class="p">)</span>
+        <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;&lt;img src=&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s1">&quot;/&gt;&#39;</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">image_representations</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">probabilities</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;confidence_score&#39;</span><span class="p">)</span>
+        <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+    <span class="n">data_csv_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">_encode</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">data_point</span><span class="p">])</span> <span class="k">for</span> <span class="n">data_point</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">columns</span><span class="p">)])</span>
+    <span class="n">confusion_matrix_js_str</span> <span class="o">=</span> <span class="s2">&quot;const confusionMatrixData = `</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">data_csv_str</span> <span class="o">+</span> <span class="s2">&quot;`;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">confusion_matrix_js_str</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Peter Kok, Christiaan Meijer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
