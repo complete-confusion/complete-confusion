@@ -1,3 +1,4 @@
+import json
 import shutil
 from pathlib import Path
 from typing import Union, Collection, Optional
@@ -43,7 +44,7 @@ def _calculate_performance_metrics(truths: Collection[int],
     if probabilities is not None:
         from sklearn.metrics import roc_auc_score, roc_curve
         fpr, tpr, thresholds = roc_curve(y_true=truth_labels, y_score=probabilities, pos_label=(list(classes)[0]))
-        roc = df({'fpr': fpr, 'tpr': tpr})
+        roc = df({'fpr': fpr, 'tpr': tpr, 'threshold': thresholds})
         roc_auc = (roc_auc_score(truth_labels, probabilities))
     else:
         roc = None
@@ -130,8 +131,10 @@ def _table_df_to_str(metrics_df, variable_name):
         {"type": idx, **{col: float(metrics_df.loc[idx, col]) for col in metrics_df.columns}}
         for idx in metrics_df.index
     ]
+
+    metrics_values_str = json.dumps(metrics_values)
     return ("const " + variable_name + " = {\n    values: " +
-            str(metrics_values).replace("'", '"') + "\n};\n")
+            metrics_values_str + "\n};\n")
 
 
 def _encode(e:str)->str:

@@ -283,7 +283,10 @@ const rocCurveSpec = {
           "stroke": {"value": "steelblue"},
           "strokeWidth": {"value": 1.5},
           "fill": {"value": "white"},
-          "size": {"value": 30}
+          "size": {"value": 30},
+          "tooltip": {
+            "signal": "{'Threshold': format(datum.threshold, '.8f'), 'FPR': format(datum.fpr, '.2f'), 'TPR': format(datum.tpr, '.2f')}"
+          }
         }
       }
     }
