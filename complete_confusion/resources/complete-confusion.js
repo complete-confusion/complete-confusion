@@ -210,6 +210,13 @@ const rocCurveSpec = {
     "text": {"signal": "'ROC Curve'"},
   },
 
+  "signals": [
+    {
+      "name": "hideSymbols",
+      "value": true
+    }
+  ],
+
   "data": [
     {
       "name": "table",
@@ -287,6 +294,9 @@ const rocCurveSpec = {
           "tooltip": {
             "signal": "{'Threshold': format(datum.threshold, '.8f'), 'FPR': format(datum.fpr, '.2f'), 'TPR': format(datum.tpr, '.2f')}"
           }
+        },
+        "update": {
+          "opacity": {"signal": "hideSymbols ? 0 : 1"}
         }
       }
     }
