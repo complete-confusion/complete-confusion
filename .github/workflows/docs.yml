@@ -47,6 +47,37 @@ jobs:
       run: |
         cd docs
         poetry run sphinx-build -b html source build/html
+        cd ..
+    
+    - name: Download demo assets
+      run: |
+        # Get latest assets release using GitHub API
+        echo "Fetching latest assets release..."
+        RELEASE_URL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/releases" | \
+          jq -r '.[] | select(.tag_name | startswith("assets-")) | .assets[0].browser_download_url' | head -n 1)
+        
+        if [ "$RELEASE_URL" != "null" ] && [ -n "$RELEASE_URL" ]; then
+          echo "Downloading assets from: $RELEASE_URL"
+          mkdir -p temp_download
+          curl -L -o temp_download/notebook-assets.tar.gz "$RELEASE_URL"
+          
+          # Extract to target directory
+          mkdir -p docs/build/html/notebooks
+          tar -xzf temp_download/notebook-assets.tar.gz -C docs/build/html/notebooks/
+          
+          echo "Assets downloaded and extracted successfully"
+          rm -rf temp_download
+        else
+          echo "No assets releases found, skipping asset integration"
+        fi
+    
+    - name: Copy notebook outputs (fallback)
+      run: |
+        # Copy any existing notebook outputs as fallback
+        chmod +x copy_notebook_outputs.sh
+        ./copy_notebook_outputs.sh
+        cd docs
         touch build/html/.nojekyll
     
     - name: Deploy to GitHub Pages

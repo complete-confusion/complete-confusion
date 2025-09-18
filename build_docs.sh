@@ -25,16 +25,22 @@ echo "Building HTML documentation..."
 cd docs
 poetry run sphinx-build -b html source build/html
 
-# Copy notebook outputs to the built documentation
-echo "Copying notebook outputs..."
-NOTEBOOKS_DIR="source/notebooks"
-OUTPUT_BUILD_DIR="build/html/notebooks"
-if [ -d "${NOTEBOOKS_DIR}" ]; then
-    echo "Copying all notebook outputs..."
-    cp -r "${NOTEBOOKS_DIR}"/* "${OUTPUT_BUILD_DIR}/" 2>/dev/null || echo "No subdirectories found to copy"
+# Download demo assets from GitHub releases
+echo "Downloading demo assets..."
+if command -v gh &> /dev/null; then
+    if ./scripts/download_assets.sh; then
+        echo "✅ Demo assets downloaded"
+    else
+        echo "ℹ️  No assets found, will use local outputs if available"
+    fi
 else
-    echo "Warning: Notebooks directory ${NOTEBOOKS_DIR} not found"
+    echo "ℹ️  GitHub CLI not found, will use local outputs if available"
 fi
+
+# Copy any local notebook outputs as fallback
+echo "Copying local notebook outputs (fallback)..."
+cd ..
+./copy_notebook_outputs.sh
 cd docs
 
 # Create .nojekyll file for GitHub Pages
