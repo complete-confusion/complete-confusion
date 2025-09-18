@@ -1,3 +1,4 @@
+import json
 import shutil
 from pathlib import Path
 from typing import Union, Collection, Optional
@@ -29,7 +30,7 @@ def _calculate_performance_metrics(truths: Collection[int],
     :param predictions: list of model predictions
     :param probabilities: list of model predicted probabilities
     :param classes: the collection of all possible labels
-    :return: a dataframe with class level metrics and a dataframe with general metrics and a one with ROC values
+    :return: 4 dataframes containing class level metrics, general metrics, ROC values and the confusion matrix
     """
     truth_labels = [list(classes)[i] for i in truths]
     prediction_labels = [list(classes)[i] for i in predictions]
@@ -43,7 +44,7 @@ def _calculate_performance_metrics(truths: Collection[int],
     if probabilities is not None:
         from sklearn.metrics import roc_auc_score, roc_curve
         fpr, tpr, thresholds = roc_curve(y_true=truth_labels, y_score=probabilities, pos_label=(list(classes)[0]))
-        roc = df({'fpr': fpr, 'tpr': tpr})
+        roc = df({'fpr': fpr, 'tpr': tpr, 'threshold': thresholds})
         roc_auc = (roc_auc_score(truth_labels, probabilities))
     else:
         roc = None
@@ -108,14 +109,16 @@ def save_performance_metrics_to_html(
     confusion_matrix_js_str = _create_confusion_matrix_js_str(
         predictions, truths, probabilities, classes, text_representations, image_representations)
 
-    class_metrics_df, general_metrics_df, _, _ = _calculate_performance_metrics(truths, predictions, probabilities,
+    class_metrics_df, general_metrics_df, roc_df, _ = _calculate_performance_metrics(truths, predictions, probabilities,
                                                                                 classes)
+
     class_metrics_js_str = _table_df_to_str(class_metrics_df, "classMetricsData")
+    roc_js_str = "" if roc_df is None else _table_df_to_str(roc_df, "rocCurveData")
     general_metrics_js_str = _table_df_to_str(general_metrics_df, "generalMetricsData")
 
     # Save the data to a JavaScript file
     with open(output_path / 'complete-confusion-data.js', 'w', encoding='utf-8') as f:
-        f.write('\n'.join([confusion_matrix_js_str, class_metrics_js_str, general_metrics_js_str]))
+        f.write('\n'.join([confusion_matrix_js_str, class_metrics_js_str, general_metrics_js_str, roc_js_str]))
 
     shutil.copy(resources / 'complete-confusion.html', output_path)
     shutil.copy(resources / 'complete-confusion.css', output_path)
@@ -128,8 +131,10 @@ def _table_df_to_str(metrics_df, variable_name):
         {"type": idx, **{col: float(metrics_df.loc[idx, col]) for col in metrics_df.columns}}
         for idx in metrics_df.index
     ]
+
+    metrics_values_str = json.dumps(metrics_values)
     return ("const " + variable_name + " = {\n    values: " +
-            str(metrics_values).replace("'", '"') + "\n};\n")
+            metrics_values_str + "\n};\n")
 
 
 def _encode(e:str)->str:
@@ -160,7 +165,7 @@ def _create_confusion_matrix_js_str(
     if probabilities is not None:
         headers.append('confidence_score')
         columns.append(probabilities)
-    data_csv_str = '\n'.join([','.join([str(_encode(e)) for e in data_point]) for data_point in zip(*columns)])
+    data_csv_str = '\n'.join([','.join([str(_encode(str(e))) for e in data_point]) for data_point in zip(*columns)])
     confusion_matrix_js_str = "const confusionMatrixData = `\n" + ','.join(headers) + "\n" + data_csv_str + "`;\n"
 
     return confusion_matrix_js_str

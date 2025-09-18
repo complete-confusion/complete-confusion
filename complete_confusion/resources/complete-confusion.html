@@ -35,6 +35,10 @@
     <div>
         <div id="class-metrics" class="view"></div>
     </div>
+
+    <h1>ROC curve</h1>
+    <div id="roc-curve" class="view"></div>
+
     <script>
         // Function to parse CSV string into an array of objects
         function parseCSV(csvContent) {
@@ -109,6 +113,33 @@
 
         // Render class metrics chart
         vegaEmbed('#general-metrics', generalMetricsSpec);
+
+        // Render ROC curve chart (optionally)
+        if (rocCurveSpec !== null) {
+            // Render ROC curve chart
+            vegaEmbed('#roc-curve', rocCurveSpec).then(result => {
+                console.log('ROC chart embedded successfully');
+                const vegaContainer = result.view.container();
+                console.log('Container:', vegaContainer);
+
+                vegaContainer.addEventListener('mouseover', (e) => {
+                    console.log('Mouseover event fired', e.target);
+                    result.view.signal('hideSymbols', false);
+                    result.view.run();
+                    console.log('Signal set to true');
+                });
+
+                vegaContainer.addEventListener('mouseout', (e) => {
+                    console.log('Mouseout event fired', e.target);
+                    result.view.signal('hideSymbols', true);
+                    result.view.run();
+                    console.log('Signal set to false');
+                });
+            }).catch(console.error);
+        }
+        else{
+            document.getElementById('roc-curve').innerHTML = '<p>No ROC curve data available.</p>';
+        }
     </script>
   </section>
   </div>
