@@ -10,15 +10,9 @@ A simple call to visualize performance metrics for classification and regression
    installation
    quickstart
    api
-   notebooks
-   examples
-   examples_interactive
+   notebooks/index
+   example_reports
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Development:
-
-   assets_guide
 
 Installation
 ============
