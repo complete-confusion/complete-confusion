@@ -25,7 +25,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.autosummary',
     'sphinx_autodoc_typehints',
-    # 'nbsphinx',  # Commented out temporarily due to compatibility issues
+    # 'nbsphinx',  # Requires pandoc, using alternative approach
     'myst_parser',
 ]
 

@@ -6,8 +6,9 @@ This section contains interactive Jupyter notebooks demonstrating various use ca
 .. toctree::
    :maxdepth: 1
 
-   demo_simple
-
+   demo_notebook
+   cifar10_demo
+  
 Available Notebooks
 -------------------
 

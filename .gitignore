@@ -6,6 +6,7 @@ __pycache__/
 archive/
 build/
 dist/
+docs/**/images/
 *.egg-info/
 
 /.idea/

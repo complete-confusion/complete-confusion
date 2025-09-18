@@ -25,6 +25,20 @@ echo "Building HTML documentation..."
 cd docs
 poetry run sphinx-build -b html source build/html
 
+# Copy notebook outputs to the built documentation
+echo "Copying notebook outputs..."
+NOTEBOOKS_DIR="docs/source/notebooks"
+DOCS_STATIC_DIR="docs/build/html/notebooks"
+cd ..
+if [ -d "${NOTEBOOKS_DIR}" ]; then
+    echo "Copying all notebook outputs..."
+    mkdir -p "${DOCS_STATIC_DIR}"
+    cp -r "${NOTEBOOKS_DIR}"/*/ "${DOCS_STATIC_DIR}/" 2>/dev/null || echo "No subdirectories found to copy"
+else
+    echo "Warning: Notebooks directory ${NOTEBOOKS_DIR} not found"
+fi
+cd docs
+
 # Create .nojekyll file for GitHub Pages
 touch build/html/.nojekyll
 
