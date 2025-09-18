@@ -6,9 +6,11 @@ This section contains interactive Jupyter notebooks demonstrating various use ca
 .. toctree::
    :maxdepth: 1
 
-   demo_notebook
-   cifar10_demo
-  
+   demo_minimal
+   demo_multiclass
+   demo_binary
+   demo_cifar10
+
 Available Notebooks
 -------------------
 
