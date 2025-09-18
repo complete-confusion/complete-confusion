@@ -3,8 +3,13 @@
 __pycache__/
 *.py[cod]
 
+archive/
 build/
 dist/
 *.egg-info/
 
 /.idea/
+
+# Documentation builds
+docs/build/
+docs/source/notebooks/*/

@@ -1,0 +1,85 @@
+name: Build and Deploy Documentation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      id: setup-python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v3
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+    
+    - name: Install dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: poetry install --no-interaction --no-root --with docs
+    
+    - name: Install package
+      run: poetry install --no-interaction
+    
+    - name: Build documentation
+      run: |
+        cd docs
+        poetry run sphinx-build -b html source build/html
+        cd ..
+    
+    - name: Download demo assets
+      run: |
+        # Get latest assets release using GitHub API
+        echo "Fetching latest assets release..."
+        RELEASE_URL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/releases" | \
+          jq -r '.[] | select(.tag_name | startswith("assets-")) | .assets[0].browser_download_url' | head -n 1)
+        
+        if [ "$RELEASE_URL" != "null" ] && [ -n "$RELEASE_URL" ]; then
+          echo "Downloading assets from: $RELEASE_URL"
+          mkdir -p temp_download
+          curl -L -o temp_download/notebook-assets.tar.gz "$RELEASE_URL"
+          
+          # Extract to target directory
+          mkdir -p docs/build/html/notebooks
+          tar -xzf temp_download/notebook-assets.tar.gz -C docs/build/html/notebooks/
+          
+          echo "Assets downloaded and extracted successfully"
+          rm -rf temp_download
+        else
+          echo "No assets releases found, skipping asset integration"
+        fi
+
+    - name: Create .nojekyll file
+      run: |
+        cd docs
+        touch build/html/.nojekyll
+    
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/build/html
