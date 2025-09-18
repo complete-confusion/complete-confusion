@@ -1,4 +1,4 @@
-Jupyter Notebooks
+Example Notebooks
 =================
 
 This section contains interactive Jupyter notebooks demonstrating various use cases and features of Complete Confusion.

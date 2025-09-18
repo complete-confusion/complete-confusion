@@ -73,4 +73,4 @@ Next Steps
 ----------
 
 - Check out the :doc:`api` for detailed function documentation
-- See :doc:`examples` for more use cases
+- See :doc:`notebooks/index` for more use cases

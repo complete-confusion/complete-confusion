@@ -25,8 +25,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.autosummary',
     'sphinx_autodoc_typehints',
-    # 'nbsphinx',  # Requires pandoc, using alternative approach
-    'myst_parser',
+    'myst_nb',
 ]
 
 templates_path = ['_templates']
@@ -46,14 +45,11 @@ autodoc_default_options = {
     'show-inheritance': True,
 }
 
-# -- Options for nbsphinx ---------------------------------------------------
-nbsphinx_execute = 'never'  # Don't execute notebooks during build
-nbsphinx_allow_errors = True
-nbsphinx_kernel_name = 'python3'
-nbsphinx_timeout = 60
-nbsphinx_codecell_lexer = 'ipython3'
+# -- Options for myst_nb ----------------------------------------------------
+nb_execution_mode = "off"  # Don't execute notebooks during build
+nb_execution_allow_errors = True
+nb_execution_timeout = 60
 
-# -- Options for intersphinx ------------------------------------------------
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
@@ -62,15 +58,5 @@ intersphinx_mapping = {
     'plotly': ('https://plotly.com/python-api-reference/', None),
 }
 
-# -- Options for myst_parser ------------------------------------------------
-myst_enable_extensions = [
-    "deflist",
-    "html_admonition",
-    "html_image",
-    "colon_fence",
-    "smartquotes",
-    "replacements",
-]
-
-# GitHub Pages configuration
+# -- Options for intersphinx ------------------------------------------------
 html_baseurl = 'https://complete-confusion.github.io/complete-confusion/'
