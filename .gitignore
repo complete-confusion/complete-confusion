@@ -13,6 +13,3 @@ dist/
 # Documentation builds
 docs/build/
 docs/source/notebooks/*/
-
-# Generated HTML files
-*.html
