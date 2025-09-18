@@ -114,26 +114,32 @@
         // Render class metrics chart
         vegaEmbed('#general-metrics', generalMetricsSpec);
 
-        // Render ROC curve chart
-        vegaEmbed('#roc-curve', rocCurveSpec).then(result => {
-            console.log('ROC chart embedded successfully');
-            const vegaContainer = result.view.container();
-            console.log('Container:', vegaContainer);
+        // Render ROC curve chart (optionally)
+        if (rocCurveSpec !== null) {
+            // Render ROC curve chart
+            vegaEmbed('#roc-curve', rocCurveSpec).then(result => {
+                console.log('ROC chart embedded successfully');
+                const vegaContainer = result.view.container();
+                console.log('Container:', vegaContainer);
 
-            vegaContainer.addEventListener('mouseover', (e) => {
-                console.log('Mouseover event fired', e.target);
-                result.view.signal('hideSymbols', false);
-                result.view.run();
-                console.log('Signal set to true');
-            });
+                vegaContainer.addEventListener('mouseover', (e) => {
+                    console.log('Mouseover event fired', e.target);
+                    result.view.signal('hideSymbols', false);
+                    result.view.run();
+                    console.log('Signal set to true');
+                });
 
-            vegaContainer.addEventListener('mouseout', (e) => {
-                console.log('Mouseout event fired', e.target);
-                result.view.signal('hideSymbols', true);
-                result.view.run();
-                console.log('Signal set to false');
-            });
-        }).catch(console.error);
+                vegaContainer.addEventListener('mouseout', (e) => {
+                    console.log('Mouseout event fired', e.target);
+                    result.view.signal('hideSymbols', true);
+                    result.view.run();
+                    console.log('Signal set to false');
+                });
+            }).catch(console.error);
+        }
+        else{
+            document.getElementById('roc-curve').innerHTML = '<p>No ROC curve data available.</p>';
+        }
     </script>
   </section>
   </div>

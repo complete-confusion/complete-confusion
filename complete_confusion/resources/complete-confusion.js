@@ -194,111 +194,120 @@ const generalMetricsSpec = {
   }
 };
 
-const rocCurveSpec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "description": "ROC Curve",
-  "width": 500,
-  "height": 500,
-  "padding": 5,
-  "config": {
+let rocCurveSpec = null;
+
+if (typeof rocCurveData !== 'undefined') {
+  const aucItem = generalMetricsData.values.find(item => item.type === 'auc');
+  const rocTitleText = aucItem ?
+      `ROC Curve (AUC = ${aucItem.score.toFixed(3)})` :
+      'ROC Curve';
+
+  rocCurveSpec = {
+    "$schema": "https://vega.github.io/schema/vega/v5.json",
+    "description": "ROC Curve",
+    "width": 500,
+    "height": 500,
+    "padding": 5,
+    "config": {
+      "title": {
+        "fontSize": 16
+      }
+    },
+
     "title": {
-      "fontSize": 16
-    }
-  },
-
-  "title": {
-    "text": {"signal": "'ROC Curve'"},
-  },
-
-  "signals": [
-    {
-      "name": "hideSymbols",
-      "value": true
-    }
-  ],
-
-  "data": [
-    {
-      "name": "table",
-      "values": rocCurveData["values"],
-      "transform": [
-        {
-          "type": "extent",
-          "field": "fpr",
-          "signal": "fprs"
-        }
-      ]
+      "text": rocTitleText
     },
-  ],
 
-  "scales": [
-    {
-      "name": "x",
-      "type": "linear",
-      "range": "width",
-      "nice": true,
-      "zero": false,
-      "domain": {"data": "table", "field": "fpr"}
-    },
-    {
-      "name": "y",
-      "type": "linear",
-      "range": "height",
-      "nice": true,
-      "zero": true,
-      "domain": {"data": "table", "field": "tpr"}
-    },
-  ],
-
-  "axes": [
-    {
-      "orient": "left",
-      "scale": "y",
-      "title": "True Positive Rate",
-      "titlePadding": 10,
-      "grid": true
-    },
-    {
-      "orient": "bottom",
-      "scale": "x",
-      "title": "False Positive Rate",
-      "tickCount": 10
-    }
-  ],
-
-  "marks": [
-    {
-      "type": "line",
-      "from": {"data": "table"},
-      "encode": {
-        "enter": {
-          "interpolate": {"value": "monotone"},
-          "x": {"scale": "x", "field": "fpr"},
-          "y": {"scale": "y", "field": "tpr"},
-          "stroke": {"value": "steelblue"},
-          "strokeWidth": {"value": 3}
-        }
+    "signals": [
+      {
+        "name": "hideSymbols",
+        "value": true
       }
-    },
-    {
-      "type": "symbol",
-      "from": {"data": "table"},
-      "encode": {
-        "enter": {
-          "x": {"scale": "x", "field": "fpr"},
-          "y": {"scale": "y", "field": "tpr"},
-          "stroke": {"value": "steelblue"},
-          "strokeWidth": {"value": 1.5},
-          "fill": {"value": "white"},
-          "size": {"value": 30},
-          "tooltip": {
-            "signal": "{'Threshold': format(datum.threshold, '.8f'), 'FPR': format(datum.fpr, '.2f'), 'TPR': format(datum.tpr, '.2f')}"
+    ],
+
+    "data": [
+      {
+        "name": "table",
+        "values": rocCurveData["values"],
+        "transform": [
+          {
+            "type": "extent",
+            "field": "fpr",
+            "signal": "fprs"
           }
-        },
-        "update": {
-          "opacity": {"signal": "hideSymbols ? 0 : 1"}
+        ]
+      },
+    ],
+
+    "scales": [
+      {
+        "name": "x",
+        "type": "linear",
+        "range": "width",
+        "nice": true,
+        "zero": false,
+        "domain": {"data": "table", "field": "fpr"}
+      },
+      {
+        "name": "y",
+        "type": "linear",
+        "range": "height",
+        "nice": true,
+        "zero": true,
+        "domain": {"data": "table", "field": "tpr"}
+      },
+    ],
+
+    "axes": [
+      {
+        "orient": "left",
+        "scale": "y",
+        "title": "True Positive Rate",
+        "titlePadding": 10,
+        "grid": true
+      },
+      {
+        "orient": "bottom",
+        "scale": "x",
+        "title": "False Positive Rate",
+        "tickCount": 10
+      }
+    ],
+
+    "marks": [
+      {
+        "type": "line",
+        "from": {"data": "table"},
+        "encode": {
+          "enter": {
+            "interpolate": {"value": "monotone"},
+            "x": {"scale": "x", "field": "fpr"},
+            "y": {"scale": "y", "field": "tpr"},
+            "stroke": {"value": "steelblue"},
+            "strokeWidth": {"value": 3}
+          }
+        }
+      },
+      {
+        "type": "symbol",
+        "from": {"data": "table"},
+        "encode": {
+          "enter": {
+            "x": {"scale": "x", "field": "fpr"},
+            "y": {"scale": "y", "field": "tpr"},
+            "stroke": {"value": "steelblue"},
+            "strokeWidth": {"value": 1.5},
+            "fill": {"value": "white"},
+            "size": {"value": 30},
+            "tooltip": {
+              "signal": "{'Threshold': format(datum.threshold, '.8f'), 'FPR': format(datum.fpr, '.2f'), 'TPR': format(datum.tpr, '.2f')}"
+            }
+          },
+          "update": {
+            "opacity": {"signal": "hideSymbols ? 0 : 1"}
+          }
         }
       }
-    }
-  ],
+    ],
+  }
 }
