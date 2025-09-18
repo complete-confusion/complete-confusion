@@ -71,12 +71,9 @@ jobs:
         else
           echo "No assets releases found, skipping asset integration"
         fi
-    
-    - name: Copy notebook outputs (fallback)
+
+    - name: Create .nojekyll file
       run: |
-        # Copy any existing notebook outputs as fallback
-        chmod +x copy_notebook_outputs.sh
-        ./copy_notebook_outputs.sh
         cd docs
         touch build/html/.nojekyll
     

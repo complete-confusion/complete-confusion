@@ -27,6 +27,7 @@ poetry run sphinx-build -b html source build/html
 
 # Download demo assets from GitHub releases
 echo "Downloading demo assets..."
+cd ..
 if command -v gh &> /dev/null; then
     if ./scripts/download_assets.sh; then
         echo "✅ Demo assets downloaded"
@@ -37,10 +38,6 @@ else
     echo "ℹ️  GitHub CLI not found, will use local outputs if available"
 fi
 
-# Copy any local notebook outputs as fallback
-echo "Copying local notebook outputs (fallback)..."
-cd ..
-./copy_notebook_outputs.sh
 cd docs
 
 # Create .nojekyll file for GitHub Pages
