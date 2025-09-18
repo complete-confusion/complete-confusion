@@ -6,14 +6,13 @@ __pycache__/
 archive/
 build/
 dist/
-docs/**/images/
 *.egg-info/
 
 /.idea/
 
 # Documentation builds
 docs/build/
-docs/source/_build/
+docs/source/notebooks/*/
 
 # Generated HTML files
 *.html
