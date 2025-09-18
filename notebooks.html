@@ -52,10 +52,13 @@
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Jupyter Notebooks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#demo-notebook">Demo Notebook</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#additional-examples">Additional Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cifar-10-cnn-demo">CIFAR-10 CNN Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-notebooks-locally">Running the Notebooks Locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactive-output-examples">Interactive Output Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_interactive.html">Interactive Examples</a></li>
 </ul>
 
         </div>
@@ -84,42 +87,93 @@
              
   <section id="jupyter-notebooks">
 <h1>Jupyter Notebooks<a class="headerlink" href="#jupyter-notebooks" title="Link to this heading"></a></h1>
-<p>This project includes Jupyter notebooks that demonstrate the functionality of Complete Confusion.</p>
+<p>This section contains interactive Jupyter notebooks that demonstrate the functionality of Complete Confusion.</p>
 <section id="demo-notebook">
 <h2>Demo Notebook<a class="headerlink" href="#demo-notebook" title="Link to this heading"></a></h2>
-<p>A demonstration notebook is available in the project root directory:</p>
+<p>The main demonstration notebook shows comprehensive examples of Complete Confusion usage:</p>
+<p><strong>View Online:</strong> <a class="reference external" href="https://github.com/complete-confusion/complete-confusion/blob/main/docs/source/notebooks/demo_notebook.ipynb">demo_notebook.ipynb on GitHub</a></p>
+<p><strong>Local Path:</strong> <code class="docutils literal notranslate"><span class="pre">docs/source/notebooks/demo_notebook.ipynb</span></code></p>
+<p>The notebook demonstrates:</p>
+<ol class="arabic simple">
+<li><p><strong>Basic usage</strong> - minimal example with predefined data</p></li>
+<li><p><strong>Multi-class classification</strong> - with synthetic data and Random Forest</p></li>
+<li><p><strong>Binary classification</strong> - another realistic example</p></li>
+</ol>
+</section>
+<section id="cifar-10-cnn-demo">
+<h2>CIFAR-10 CNN Demo<a class="headerlink" href="#cifar-10-cnn-demo" title="Link to this heading"></a></h2>
+<p>A comprehensive real-world example using deep learning on the CIFAR-10 dataset:</p>
+<p><strong>View Online:</strong> <a class="reference external" href="https://github.com/complete-confusion/complete-confusion/blob/main/docs/source/notebooks/cifar10_demo.ipynb">cifar10_demo.ipynb on GitHub</a></p>
+<p><strong>Local Path:</strong> <code class="docutils literal notranslate"><span class="pre">docs/source/notebooks/cifar10_demo.ipynb</span></code></p>
+<p>This advanced demo shows:</p>
+<ol class="arabic simple">
+<li><p><strong>Data loading</strong> - downloading and preprocessing CIFAR-10 dataset</p></li>
+<li><p><strong>CNN architecture</strong> - building a convolutional neural network</p></li>
+<li><p><strong>Training loop</strong> - training the model with proper validation</p></li>
+<li><p><strong>Performance evaluation</strong> - using Complete Confusion for comprehensive analysis</p></li>
+<li><p><strong>Image integration</strong> - embedding actual CIFAR-10 images in the report</p></li>
+</ol>
+<p><strong>Advanced Features:</strong>
+- <strong>Base64 image embedding</strong> - CIFAR-10 images included directly in HTML reports
+- <strong>Misclassification analysis</strong> - focused reports on classification errors
+- <strong>Self-contained reports</strong> - no external dependencies, works offline
+- <strong>Multiple report types</strong> - full dataset and error-focused versions</p>
+<p><strong>Features:</strong>
+- Downloads CIFAR-10 automatically (60,000 images, 10 classes)
+- Implements a modern CNN with batch normalization and dropout
+- Trains for multiple epochs with learning rate scheduling
+- Generates detailed performance reports for all 10 classes
+- <strong>Embeds actual CIFAR-10 images</strong> using base64 data URIs
+- Creates focused misclassification reports with images
+- Includes visualizations of training progress and sample data</p>
+<p>Each example generates an HTML report containing:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/complete-confusion/complete-confusion/blob/main/demo.ipynb">demo.ipynb</a> - Basic usage example</p></li>
+<li><p>Interactive confusion matrix</p></li>
+<li><p>Performance metrics (precision, recall, F1-score)</p></li>
+<li><p>Per-class statistics</p></li>
+<li><p>Detailed visualizations</p></li>
 </ul>
-<p>This notebook shows:</p>
-<ul class="simple">
-<li><p>Basic usage with sample data</p></li>
-<li><p>How to generate HTML performance reports</p></li>
-<li><p>Example output interpretation</p></li>
-</ul>
-<p>To run the notebook locally:</p>
+</section>
+<section id="running-the-notebooks-locally">
+<h2>Running the Notebooks Locally<a class="headerlink" href="#running-the-notebooks-locally" title="Link to this heading"></a></h2>
+<p>To run the notebooks locally:</p>
 <ol class="arabic">
-<li><p>Install the package with development dependencies:</p>
+<li><p><strong>Install the package with development dependencies:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="w"> </span>docs
 </pre></div>
 </div>
 </li>
-<li><p>Start Jupyter:</p>
+<li><p><strong>Start Jupyter:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>jupyter<span class="w"> </span>notebook
 </pre></div>
 </div>
 </li>
-<li><p>Open <cite>demo.ipynb</cite> and run the cells</p></li>
-</ol>
-</section>
-<section id="additional-examples">
-<h2>Additional Examples<a class="headerlink" href="#additional-examples" title="Link to this heading"></a></h2>
-<p>For more comprehensive examples, check out the <a class="reference internal" href="examples.html"><span class="doc">Examples</span></a> section which includes:</p>
+<li><p><strong>Navigate to and open the desired notebook:</strong></p>
 <ul class="simple">
-<li><p>Binary classification examples</p></li>
-<li><p>Multi-class classification examples</p></li>
-<li><p>Imbalanced dataset handling</p></li>
-<li><p>Integration with scikit-learn</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/source/notebooks/demo_notebook.ipynb</span></code> - Basic examples</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/source/notebooks/cifar10_demo.ipynb</span></code> - CNN/CIFAR-10 example</p></li>
+</ul>
+</li>
+<li><p><strong>Run the cells</strong> to generate the HTML reports</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The CIFAR-10 demo requires PyTorch and will download ~170MB of data on first run.
+Training time depends on your hardware (CPU: ~10-15 minutes, GPU: ~2-3 minutes).</p>
+</div>
+</section>
+<section id="interactive-output-examples">
+<h2>Interactive Output Examples<a class="headerlink" href="#interactive-output-examples" title="Link to this heading"></a></h2>
+<p>The notebooks generate interactive HTML reports that you can view:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="examples_interactive.html"><span class="doc">Interactive Examples</span></a> - Links to the actual generated HTML files</p></li>
+</ul>
+<p>The generated HTML files are self-contained and include:</p>
+<ul class="simple">
+<li><p><strong>complete-confusion.html</strong>: Main interactive report</p></li>
+<li><p><strong>complete-confusion.css</strong>: Styling and layout</p></li>
+<li><p><strong>complete-confusion.js</strong>: Interactive functionality</p></li>
+<li><p><strong>complete-confusion-data.js</strong>: Performance data and metrics</p></li>
 </ul>
 </section>
 </section>

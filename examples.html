@@ -22,6 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Interactive Examples" href="examples_interactive.html" />
     <link rel="prev" title="Jupyter Notebooks" href="notebooks.html" /> 
 </head>
 
@@ -51,11 +52,17 @@
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks.html">Jupyter Notebooks</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#binary-classification">Binary Classification</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#multi-class-classification">Multi-class Classification</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#imbalanced-dataset">Imbalanced Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quick-reference-examples">Quick Reference Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#binary-classification">Binary Classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multi-class-classification">Multi-class Classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integration-with-scikit-learn">Integration with Scikit-learn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#working-with-imbalanced-data">Working with Imbalanced Data</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#including-images-in-reports">Including Images in Reports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples_interactive.html">Interactive Examples</a></li>
 </ul>
 
         </div>
@@ -84,103 +91,89 @@
              
   <section id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
-<p>This section contains various examples showing how to use Complete Confusion in different scenarios.</p>
+<p>This section provides various examples showing how to use Complete Confusion in different scenarios.</p>
+<p>For hands-on examples with executable code, see the <a class="reference internal" href="notebooks.html"><span class="doc">Jupyter Notebooks</span></a> section which includes a comprehensive Jupyter notebook with interactive examples.</p>
+<section id="quick-reference-examples">
+<h2>Quick Reference Examples<a class="headerlink" href="#quick-reference-examples" title="Link to this heading"></a></h2>
 <section id="binary-classification">
-<h2>Binary Classification<a class="headerlink" href="#binary-classification" title="Link to this heading"></a></h2>
+<h3>Binary Classification<a class="headerlink" href="#binary-classification" title="Link to this heading"></a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">complete_confusion</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cc</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="c1"># Generate synthetic binary classification data</span>
-<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">1000</span>
-
-<span class="c1"># Simulate predictions and true labels</span>
-<span class="n">true_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
-<span class="c1"># Add some noise to create realistic predictions</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">true_labels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">noise_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">n_samples</span><span class="p">),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">predictions</span><span class="p">[</span><span class="n">noise_indices</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">predictions</span><span class="p">[</span><span class="n">noise_indices</span><span class="p">]</span>
-
+<span class="c1"># Your binary classification results</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">true_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 <span class="n">class_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Negative&quot;</span><span class="p">,</span> <span class="s2">&quot;Positive&quot;</span><span class="p">]</span>
 
 <span class="n">cc</span><span class="o">.</span><span class="n">save_performance_metrics_to_html</span><span class="p">(</span>
     <span class="n">predictions</span><span class="p">,</span>
     <span class="n">true_labels</span><span class="p">,</span>
     <span class="n">class_names</span><span class="p">,</span>
-    <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;binary_classification_example.html&quot;</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;binary_results&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="multi-class-classification">
-<h2>Multi-class Classification<a class="headerlink" href="#multi-class-classification" title="Link to this heading"></a></h2>
+<h3>Multi-class Classification<a class="headerlink" href="#multi-class-classification" title="Link to this heading"></a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">complete_confusion</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cc</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_classification</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">GradientBoostingClassifier</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
 
-<span class="c1"># Generate multi-class dataset</span>
-<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span>
-    <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-    <span class="n">n_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">n_informative</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">n_redundant</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">n_classes</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
-<span class="p">)</span>
-
-<span class="c1"># Split and train</span>
-<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
-    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
-<span class="p">)</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">GradientBoostingClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-
-<span class="n">class_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Class </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+<span class="c1"># Your multi-class classification results</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">true_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">class_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Class A&quot;</span><span class="p">,</span> <span class="s2">&quot;Class B&quot;</span><span class="p">,</span> <span class="s2">&quot;Class C&quot;</span><span class="p">]</span>
 
 <span class="n">cc</span><span class="o">.</span><span class="n">save_performance_metrics_to_html</span><span class="p">(</span>
     <span class="n">predictions</span><span class="p">,</span>
-    <span class="n">y_test</span><span class="p">,</span>
+    <span class="n">true_labels</span><span class="p">,</span>
     <span class="n">class_names</span><span class="p">,</span>
-    <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;multiclass_example.html&quot;</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;multiclass_results&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="imbalanced-dataset">
-<h2>Imbalanced Dataset<a class="headerlink" href="#imbalanced-dataset" title="Link to this heading"></a></h2>
+<section id="integration-with-scikit-learn">
+<h3>Integration with Scikit-learn<a class="headerlink" href="#integration-with-scikit-learn" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">complete_confusion</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_iris</span>
+
+<span class="c1"># Load and split data</span>
+<span class="n">iris</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">()</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Train model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Generate performance report</span>
+<span class="n">cc</span><span class="o">.</span><span class="n">save_performance_metrics_to_html</span><span class="p">(</span>
+    <span class="n">predictions</span><span class="p">,</span>
+    <span class="n">y_test</span><span class="p">,</span>
+    <span class="n">iris</span><span class="o">.</span><span class="n">target_names</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;iris_results&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="working-with-imbalanced-data">
+<h3>Working with Imbalanced Data<a class="headerlink" href="#working-with-imbalanced-data" title="Link to this heading"></a></h3>
+<p>Complete Confusion automatically handles imbalanced datasets and provides relevant metrics:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">complete_confusion</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="c1"># Create highly imbalanced dataset</span>
+<span class="c1"># Highly imbalanced dataset (95% class 0, 5% class 1)</span>
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">true_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">])</span>
 
-<span class="c1"># 95% class 0, 5% class 1</span>
-<span class="n">true_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">])</span>
-
-<span class="c1"># Simulate a model that struggles with minority class</span>
+<span class="c1"># Simulate model predictions with some errors</span>
 <span class="n">predictions</span> <span class="o">=</span> <span class="n">true_labels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-<span class="c1"># Model misses 50% of positive cases (high false negative rate)</span>
-<span class="n">positive_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">true_labels</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">missed_positives</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-    <span class="n">positive_indices</span><span class="p">,</span>
-    <span class="n">size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">positive_indices</span><span class="p">)),</span>
-    <span class="n">replace</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span>
-<span class="n">predictions</span><span class="p">[</span><span class="n">missed_positives</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-<span class="c1"># Model has some false positives</span>
-<span class="n">negative_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">true_labels</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">false_positives</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-    <span class="n">negative_indices</span><span class="p">,</span>
-    <span class="n">size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">0.02</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">negative_indices</span><span class="p">)),</span>
-    <span class="n">replace</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span>
-<span class="n">predictions</span><span class="p">[</span><span class="n">false_positives</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1"># Add some misclassifications</span>
+<span class="n">error_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">predictions</span><span class="p">[</span><span class="n">error_indices</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">predictions</span><span class="p">[</span><span class="n">error_indices</span><span class="p">]</span>
 
 <span class="n">class_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Majority Class&quot;</span><span class="p">,</span> <span class="s2">&quot;Minority Class&quot;</span><span class="p">]</span>
 
@@ -188,10 +181,66 @@
     <span class="n">predictions</span><span class="p">,</span>
     <span class="n">true_labels</span><span class="p">,</span>
     <span class="n">class_names</span><span class="p">,</span>
-    <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;imbalanced_example.html&quot;</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;imbalanced_results&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>The generated HTML reports include:</p>
+<ul class="simple">
+<li><p><strong>Interactive confusion matrix</strong> with hover details</p></li>
+<li><p><strong>Per-class metrics</strong> (precision, recall, F1-score)</p></li>
+<li><p><strong>Overall performance</strong> statistics</p></li>
+<li><p><strong>Support information</strong> (number of samples per class)</p></li>
+</ul>
+</section>
+</section>
+<section id="including-images-in-reports">
+<h2>Including Images in Reports<a class="headerlink" href="#including-images-in-reports" title="Link to this heading"></a></h2>
+<p>Complete Confusion supports including images alongside predictions for visual analysis:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">complete_confusion</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_image_data_uri</span><span class="p">(</span><span class="n">img_array</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert image array to base64 data URI for embedding.&quot;&quot;&quot;</span>
+    <span class="c1"># Convert to PIL Image (assuming img_array is HxWxC format)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">((</span><span class="n">img_array</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span> <span class="n">Image</span><span class="o">.</span><span class="n">NEAREST</span><span class="p">)</span>  <span class="c1"># Resize for visibility</span>
+
+    <span class="c1"># Convert to base64 data URI</span>
+    <span class="n">buffer</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+    <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;PNG&#39;</span><span class="p">)</span>
+    <span class="n">img_b64</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;data:image/png;base64,</span><span class="si">{</span><span class="n">img_b64</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="c1"># Create image data URIs (one per prediction)</span>
+<span class="n">image_uris</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">your_image_data</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>  <span class="c1"># Limit to avoid huge HTML files</span>
+        <span class="n">image_uris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_image_data_uri</span><span class="p">(</span><span class="n">img</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">image_uris</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># Empty string = no image</span>
+
+<span class="c1"># Generate report with embedded images</span>
+<span class="n">cc</span><span class="o">.</span><span class="n">save_performance_metrics_to_html</span><span class="p">(</span>
+    <span class="n">predictions</span><span class="p">,</span>
+    <span class="n">true_labels</span><span class="p">,</span>
+    <span class="n">class_names</span><span class="p">,</span>
+    <span class="n">image_representations</span><span class="o">=</span><span class="n">image_uris</span><span class="p">,</span>  <span class="c1"># Add images!</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;visual_results&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Image Benefits:</strong></p>
+<ul class="simple">
+<li><p><strong>Visual error analysis</strong> - See exactly which images were misclassified</p></li>
+<li><p><strong>Data quality checks</strong> - Spot corrupted or mislabeled images</p></li>
+<li><p><strong>Self-contained reports</strong> - Images embedded as data URIs</p></li>
+<li><p><strong>Stakeholder demos</strong> - Show real examples with predictions</p></li>
+</ul>
+<p>For more detailed, executable examples, see the <a class="reference internal" href="notebooks.html"><span class="doc">Jupyter Notebooks</span></a> section.</p>
 </section>
 </section>
 
@@ -200,6 +249,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="notebooks.html" class="btn btn-neutral float-left" title="Jupyter Notebooks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples_interactive.html" class="btn btn-neutral float-right" title="Interactive Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
